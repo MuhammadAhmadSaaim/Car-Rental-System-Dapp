@@ -3,6 +3,7 @@ pragma solidity >=0.4.22 <=0.8.21;
 
 contract CarRental {
     struct Car {
+        uint256 carId; // Updated: Added carId field
         string name;
         address owner;
         bool available;
@@ -10,7 +11,7 @@ contract CarRental {
     }
 
     mapping(uint256 => Car) public cars;
-    uint256 public totalCars;
+    uint256 public totalCars = 0; // Updated: Initialize totalCars to 0
 
     event CarAdded(uint256 carId, string name, address owner);
     event CarRented(uint256 carId, address renter);
@@ -19,7 +20,13 @@ contract CarRental {
     // Function to add a new car
     function addCar(string calldata _name) external {
         uint256 carId = totalCars++;
-        cars[carId] = Car(_name, msg.sender, true, address(0));
+        cars[carId] = Car(
+            carId,
+            _name,
+            msg.sender,
+            true,
+            address(0x0000000000000000000000000000000000000000)
+        );
         emit CarAdded(carId, _name, msg.sender);
     }
 

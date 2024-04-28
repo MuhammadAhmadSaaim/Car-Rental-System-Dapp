@@ -104,6 +104,7 @@ App = {
   addCar: function () {
     var carName = prompt("Enter car name:");
     if (carName !== null && carName !== "") {
+      console.log("Car name entered by user:", carName); // Debugging
       App.contracts.CarRental.deployed().then(function (instance) {
         return instance.addCar(carName, { from: App.account });
       }).then(function (result) {
@@ -114,6 +115,7 @@ App = {
       });
     }
   },
+
 
   rentCar: function (carId) {
     App.contracts.CarRental.deployed().then(function (instance) {
