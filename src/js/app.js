@@ -137,7 +137,6 @@ App = {
     }
   },
 
-
   rentCar: function (carId) {
     App.contracts.CarRental.deployed().then(function (instance) {
       return instance.rentCar(carId, { from: App.account });
@@ -158,6 +157,24 @@ App = {
     }).catch(function (err) {
       console.error(err);
     });
+  },
+
+  filterCars: function () {
+    var input, filter, carList, cars, car, i, txtValue;
+    input = document.getElementById('searchInput');
+    filter = input.value.toUpperCase();
+    carList = document.getElementById("carlist");
+    cars = carList.getElementsByClassName('col-sm-4');
+
+    for (i = 0; i < cars.length; i++) {
+      car = cars[i];
+      txtValue = car.textContent || car.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        car.style.display = "";
+      } else {
+        car.style.display = "none";
+      }
+    }
   }
 };
 
@@ -165,5 +182,6 @@ $(function () {
   $(window).load(function () {
     App.init();
     $("#addCarBtn").click(App.addCar); // Add event listener to the "Add Car" button
+    $("#searchInput").on('input', App.filterCars); // Add event listener to the search input
   });
 });

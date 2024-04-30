@@ -32,3 +32,26 @@
     background-color: #0056b3;
   }
   
+.SearchBar {
+  display: flex;
+  justify-content: center;
+}
+
+#searchInput{
+  text-align: center;
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-container input[type="text"] {
+  padding-right: 30px; /* Adjust the padding as needed */
+}
+
+.search-container i {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
