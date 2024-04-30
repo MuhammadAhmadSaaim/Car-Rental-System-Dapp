@@ -4,9 +4,19 @@ App = {
   account: '0x0',
   hasVoted: false,
 
+  listenForAccountChange: function () {
+    // Listen for account change
+    window.ethereum.on('accountsChanged', function (accounts) {
+      // Reload the page when the account changes
+      window.location.reload();
+    });
+  },
+
   init: function () {
+    App.listenForAccountChange();
     return App.initWeb3();
   },
+
 
   initWeb3: function () {
     // TODO: refactor conditional
@@ -69,29 +79,40 @@ App = {
       carList.empty();
 
       for (var i = 0; i < totalCars; i++) {
-        carRentalInstance.cars(i).then(function (car) {
-          var carId = car[0];
-          var carName = car[1];
-          var owner = car[2];
-          var available = car[3];
-          var renter = car[4];
+        (function (i) { // Create closure to capture 'i' correctly
+          carRentalInstance.cars(i).then(function (car) {
+            var carId = car[0];
+            var carName = car[1];
+            var owner = car[2];
+            var available = car[3];
+            var renter = car[4];
 
-          // Render car information
-          var carTemplate = "<div class='col-sm-4'>";
-          carTemplate += "<b>Name:</b> " + carName + "<br>";
-          carTemplate += "<b>Owner:</b> " + owner + "<br>";
-          carTemplate += "<b>Status:</b> ";
-          if (available) {
-            carTemplate += "Available<br>";
-            carTemplate += "<button onclick='App.rentCar(" + carId + ")'>Rent</button>";
-          } else {
-            carTemplate += "Rented by " + renter + "<br>";
-            carTemplate += "<button onclick='App.returnCar(" + carId + ")'>Return</button>";
-          }
-          carTemplate += "</div>";
+            // Render car information
+            var carTemplate = "<div class='col-sm-4'>";
+            carTemplate += "<b>Name:</b> " + carName + "<br>";
+            carTemplate += "<b>Owner:</b> " + owner + "<br>";
+            carTemplate += "<b>Status:</b> ";
+            if (available) {
+              carTemplate += "Available<br>";
+              // Disable rent button if the current account is the owner
+              if (owner === App.account) {
+                carTemplate += "<button disabled>Rent</button>";
+              } else {
+                carTemplate += "<button onclick='App.rentCar(" + carId + ")'>Rent</button>";
+              }
+            } else {
+              carTemplate += "Rented by " + renter + "<br>";
+              if (renter === App.account) { // Enable return button only for the renter
+                carTemplate += "<button onclick='App.returnCar(" + carId + ")'>Return</button>";
+              } else {
+                carTemplate += "<button disabled>Return</button>";
+              }
+            }
+            carTemplate += "</div>";
 
-          carList.append(carTemplate);
-        });
+            carList.append(carTemplate);
+          });
+        })(i);
       }
 
       loader.hide();
